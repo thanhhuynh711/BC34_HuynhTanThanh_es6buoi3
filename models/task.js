@@ -1,4 +1,4 @@
-export default class Todo {
+export default class Task {
   constructor(_id, _content, _type) {
     this.id = _id;
     this.content = _content;

@@ -1,19 +1,19 @@
-export default class TodoList {
+export default class TaskList {
   constructor() {
-    this.listtodo = [];
+    this.listTask = [];
   }
 
   findIndex(id) {
     {
-      return this.listtodo.findIndex((tdo) => tdo.id === id);
+      return this.listTask.findIndex((tdo) => tdo.id === id);
     }
   }
 
   add(todoin) {
-    this.listtodo.push({ ...todoin, id: "", type: "incomplete" });
+    this.listTask.push({ ...todoin, id: "", type: "incomplete" });
   }
 
   delete(id) {
-    this.listtodo.filter((item) => item.id !== id);
+    this.listTask.filter((item) => item.id !== id);
   }
 }

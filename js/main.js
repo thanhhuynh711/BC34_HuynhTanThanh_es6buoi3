@@ -1,22 +1,21 @@
 import ServiceAPI from "../service/service.js";
-import Todo from "../models/task.js";
-import TodoList from "../models/taskList.js";
+import Task from "../models/task.js";
+import TaskList from "../models/taskList.js";
 
-let ToDoList = [];
-//POST trực tiếp
+let listTask = [];
 
-let ListToDo = new TodoList();
+let listTasks = new TaskList();
 
 document.getElementById("addItem").onclick = () => {
   let NewTask = document.getElementById("newTask").value;
-  let todoI = new Todo("", NewTask, "incomplete");
-  ToDoList = [...ToDoList, todoI];
+  let todoI = new Task("", NewTask, "incomplete");
+  listTask = [...listTask, todoI];
   postData(todoI);
-  renderTodolist(ToDoList);
+  renderTasklist(listTask);
 };
 
 document.getElementById("two").onclick = () => {
-  let arrSort = ToDoList.sort((tdoA, tdoB) => {
+  let arrSort = listTask.sort((tdoA, tdoB) => {
     let a = tdoA.content.toLowerCase();
     let b = tdoB.content.toLowerCase();
     if (a < b) {
@@ -27,10 +26,10 @@ document.getElementById("two").onclick = () => {
     }
     return 0;
   });
-  renderTodolist(arrSort);
+  renderTasklist(arrSort);
 };
 document.getElementById("three").onclick = () => {
-  let arrSort = ToDoList.sort((tdoA, tdoB) => {
+  let arrSort = listTask.sort((tdoA, tdoB) => {
     let a = tdoA.content.toLowerCase();
     let b = tdoB.content.toLowerCase();
     if (a > b) {
@@ -41,12 +40,12 @@ document.getElementById("three").onclick = () => {
     }
     return 0;
   });
-  renderTodolist(arrSort);
+  renderTasklist(arrSort);
 };
 
 const postData = async (tdo) => {
   try {
-    const postTdo = await ServiceAPI.postTodo(tdo);
+    const postTdo = await ServiceAPI.postTask(tdo);
   } catch (error) {
     throw error;
   }
@@ -57,36 +56,30 @@ window.removeTodo = (id) => {
 };
 
 window.doneTodo = (id) => {
-  for (let i = 0; i < ToDoList.length; i++) {
-    if (ToDoList[i].id * 1 === id) {
-      console.log(ToDoList[i]);
-      ToDoList[i] = { ...ToDoList[i], type: "complete" };
-      console.log(ToDoList[i]);
-      updateData(ToDoList[i]);
+  for (let i = 0; i < listTask.length; i++) {
+    if (listTask[i].id * 1 === id) {
+      listTask[i] = { ...listTask[i], type: "complete" };
+      updateData(listTask[i]);
     }
   }
 
-  console.log(id); //Number
-  console.log("13"); //Chuỗi
-  renderTodolist(ToDoList);
+  renderTasklist(listTask);
 };
 
 const updateData = async (tdo) => {
-  const upData = await ServiceAPI.updateTodo(tdo).then((res) => {
+  const upData = await ServiceAPI.updateTask(tdo).then((res) => {
     console.log(res);
   });
 };
 
 const deleteData = async (id) => {
-  const deleteTdo = await ServiceAPI.deleteTodo(id).then((res) => {
-    console.log(id); //Number
-    ToDoList = ToDoList.filter((item) => item.id !== `${id}`);
-    console.log("13"); //Chuỗi
-    renderTodolist(ToDoList);
+  const deleteTdo = await ServiceAPI.deleteTask(id).then((res) => {
+    listTask = listTask.filter((item) => item.id !== `${id}`);
+    renderTasklist(listTask);
   });
 };
 
-const renderTodolist = (list) => {
+const renderTasklist = (list) => {
   let contentA = "";
   let contentB = "";
   for (let i = 0; i < list.length; i++) {
@@ -122,18 +115,16 @@ const renderTodolist = (list) => {
   document.getElementById("todo").innerHTML = contentA;
   document.getElementById("completed").innerHTML = contentB;
 };
-//style="color:green"
 const fetchData = async () => {
   try {
-    const { data } = await ServiceAPI.getTodo();
+    const { data } = await ServiceAPI.getTask();
     if (data) {
       const list = data.map((tdo) => {
         const { id, content, type } = tdo;
-        return new Todo(id, content, type);
+        return new Task(id, content, type);
       });
-      ToDoList = [...list];
-      renderTodolist(ToDoList);
-      //RENDER
+      listTask = [...list];
+      renderTasklist(listTask);
     }
   } catch (error) {
     throw error;
